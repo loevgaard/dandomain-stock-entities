@@ -31,6 +31,7 @@ use Symfony\Component\Validator\Constraints as FormAssert;
  *
  * @ORM\Entity()
  * @ORM\Table(name="lds_stock_movements", indexes={@ORM\Index(columns={"type"})})
+ * @ORM\HasLifecycleCallbacks()
  **/
 class StockMovement implements StockMovementInterface
 {
