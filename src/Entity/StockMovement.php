@@ -30,7 +30,7 @@ use Symfony\Component\Validator\Constraints as FormAssert;
  * @method Money getTotalDiscountInclVat()
  *
  * @ORM\Entity()
- * @ORM\Table(name="lds_stock_movements")
+ * @ORM\Table(name="lds_stock_movements", indexes={@ORM\Index(columns={"type"})})
  **/
 class StockMovement implements StockMovementInterface
 {
@@ -196,7 +196,7 @@ class StockMovement implements StockMovementInterface
      *
      * @FormAssert\Choice(callback="getTypes")
      *
-     * @ORM\Column(type="string", length=191)
+     * @ORM\Column(name="type", type="string", length=191)
      */
     protected $type;
 
