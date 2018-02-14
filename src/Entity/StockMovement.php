@@ -223,6 +223,8 @@ class StockMovement implements StockMovementInterface
     protected $orderLine;
 
     /**
+     * When an associated order line is removed this flag must be set
+     *
      * @var bool
      *
      * @ORM\Column(type="boolean")
@@ -284,7 +286,17 @@ class StockMovement implements StockMovementInterface
             Assert::that($this->quantity)->greaterThan(0, 'quantity should be greater than 0 if the type is a return');
         }
 
+        if($this->price > 0) {
+            // it is assumed that if a product has a price, then it also has a retail price
+            Assert::that($this->retailPrice)->greaterThan(0, 'When the price is > 0, then retailPrice also has be > 0');
+        }
+
+        if($this->retailPrice === 0) {
+            Assert::that($this->discount)->eq(0);
+        }
+
         if ($this->complaint) {
+            // a complaint will always be a product that you remove from your stock
             Assert::that($this->quantity)->lessThan(0, 'quantity needs to be negative when the stock movement is a complaint');
         }
 
@@ -316,6 +328,7 @@ class StockMovement implements StockMovementInterface
             ->setReference($reference)
         ;
 
+        $retailPrice = $unitPrice;
         if ($product->getPrices()->count()) {
             $retailPrice = $product->findPriceByCurrency($unitPrice->getCurrency());
             if (!$retailPrice) {
@@ -323,8 +336,6 @@ class StockMovement implements StockMovementInterface
             }
 
             $retailPrice = $retailPrice->getUnitPriceExclVat($vatPercent);
-        } else {
-            $retailPrice = new Money(0, new Currency($unitPrice->getCurrency()->getCode()));
         }
 
         $stockMovement->setRetailPrice($retailPrice);
@@ -349,7 +360,7 @@ class StockMovement implements StockMovementInterface
 
         $this
             ->setQuantity(-1 * $orderLine->getQuantity()) // we multiply by -1 because we count an order as 'outgoing' from the stock
-            ->setPrice($orderLine->getUnitPrice())
+            ->setPrice($orderLine->getUnitPriceExclVat())
             ->setVatPercentage($orderLine->getVatPct())
             ->setType(static::TYPE_SALE)
             ->setProduct($orderLine->getProduct())
@@ -359,6 +370,7 @@ class StockMovement implements StockMovementInterface
             ->setUpdatedAt($created) // for order lines we specifically override the createdAt and updatedAt dates because the stock movement is actually happening when the order comes in and not when the order is synced
         ;
 
+        $retailPrice = $orderLine->getUnitPriceExclVat();
         if ($orderLine->getProduct()->getPrices()->count()) {
             $retailPrice = $orderLine->getProduct()->findPriceByCurrency($orderLine->getUnitPrice()->getCurrency());
             if (!$retailPrice) {
@@ -366,8 +378,6 @@ class StockMovement implements StockMovementInterface
             }
 
             $retailPrice = $retailPrice->getUnitPriceExclVat($orderLine->getVatPct());
-        } else {
-            $retailPrice = new Money(0, new Currency($orderLine->getUnitPrice()->getCurrency()->getCode()));
         }
 
         $this->setRetailPrice($retailPrice);
