@@ -1,10 +1,10 @@
 <?php
 
-namespace Loevgaard\DandomainStock\DandomainFoundation\Entity;
+namespace Loevgaard\DandomainStock\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
-use Loevgaard\DandomainStock\Entity\StockMovement;
+use Loevgaard\DandomainStock\Entity\Generated\StockMovementInterface;
 use Loevgaard\DandomainStock\Exception\StockMovementProductMismatchException;
 
 trait OrderLineTrait
@@ -17,13 +17,13 @@ trait OrderLineTrait
     protected $stockMovements;
 
     /**
-     * @param \Loevgaard\DandomainStock\Entity\StockMovement $stockMovement
+     * @param \Loevgaard\DandomainStock\Entity\Generated\StockMovementInterface $stockMovement
      *
      * @return OrderLineTrait
      *
      * @throws \Loevgaard\DandomainStock\Exception\StockMovementProductMismatchException
      */
-    public function addStockMovement(StockMovement $stockMovement)
+    public function addStockMovement(StockMovementInterface $stockMovement)
     {
         $this->initStockMovements();
 
@@ -53,13 +53,13 @@ trait OrderLineTrait
     }
 
     /**
-     * @param \Loevgaard\DandomainStock\Entity\StockMovement $stockMovements
+     * @param \Loevgaard\DandomainStock\Entity\Generated\StockMovementInterface[] $stockMovements
      *
      * @return OrderLineTrait
      *
      * @throws \Loevgaard\DandomainStock\Exception\StockMovementProductMismatchException
      */
-    public function setStockMovements(StockMovement $stockMovements)
+    public function setStockMovements($stockMovements)
     {
         foreach ($stockMovements as $stockMovement) {
             $this->addStockMovement($stockMovement);
@@ -86,12 +86,12 @@ trait OrderLineTrait
      *
      * Returns null if the order line has 0 stock movements
      *
-     * @return \Loevgaard\DandomainStock\Entity\StockMovement|null
+     * @return \Loevgaard\DandomainStock\Entity\Generated\StockMovementInterface|null
      *
      * @throws \Loevgaard\DandomainStock\Exception\CurrencyMismatchException
      * @throws \Loevgaard\DandomainStock\Exception\UnsetCurrencyException
      */
-    public function computeEffectiveStockMovement(): ?StockMovement
+    public function computeEffectiveStockMovement(): ?StockMovementInterface
     {
         $this->initStockMovements();
 
@@ -99,7 +99,7 @@ trait OrderLineTrait
             return null;
         }
 
-        /** @var StockMovement $lastStockMovement */
+        /** @var StockMovementInterface $lastStockMovement */
         $lastStockMovement = $this->stockMovements->last();
 
         $qty = 0;

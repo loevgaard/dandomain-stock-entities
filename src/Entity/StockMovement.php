@@ -300,8 +300,8 @@ class StockMovement implements StockMovementInterface
      *
      * @return StockMovementInterface
      *
-     * @throws CurrencyMismatchException
-     * @throws UndefinedPriceForCurrencyException
+     * @throws \Loevgaard\DandomainStock\Exception\CurrencyMismatchException
+     * @throws \Loevgaard\DandomainStock\Exception\UndefinedPriceForCurrencyException
      */
     public static function create(int $quantity, Money $unitPrice, float $vatPercent, string $type, ProductInterface $product, string $reference): StockMovementInterface
     {
@@ -334,9 +334,9 @@ class StockMovement implements StockMovementInterface
     /**
      * @param OrderLineInterface $orderLine
      *
-     * @throws CurrencyMismatchException
-     * @throws UndefinedPriceForCurrencyException
-     * @throws UnsetProductException
+     * @throws \Loevgaard\DandomainStock\Exception\CurrencyMismatchException
+     * @throws \Loevgaard\DandomainStock\Exception\UndefinedPriceForCurrencyException
+     * @throws \Loevgaard\DandomainStock\Exception\UnsetProductException
      */
     public function populateFromOrderLine(OrderLineInterface $orderLine)
     {
@@ -375,8 +375,8 @@ class StockMovement implements StockMovementInterface
     /**
      * @return StockMovement
      *
-     * @throws CurrencyMismatchException
-     * @throws UnsetCurrencyException
+     * @throws \Loevgaard\DandomainStock\Exception\CurrencyMismatchException
+     * @throws \Loevgaard\DandomainStock\Exception\UnsetCurrencyException
      */
     public function copy(): self
     {
@@ -400,8 +400,8 @@ class StockMovement implements StockMovementInterface
     /**
      * @return StockMovementInterface
      *
-     * @throws CurrencyMismatchException
-     * @throws UnsetCurrencyException
+     * @throws \Loevgaard\DandomainStock\Exception\CurrencyMismatchException
+     * @throws \Loevgaard\DandomainStock\Exception\UnsetCurrencyException
      */
     public function inverse(): StockMovementInterface
     {
@@ -414,9 +414,9 @@ class StockMovement implements StockMovementInterface
     /**
      * @param StockMovementInterface $stockMovement
      * @return StockMovementInterface
-     * @throws CurrencyMismatchException
-     * @throws UnsetCurrencyException
-     * @throws StockMovementProductMismatchException
+     * @throws \Loevgaard\DandomainStock\Exception\CurrencyMismatchException
+     * @throws \Loevgaard\DandomainStock\Exception\UnsetCurrencyException
+     * @throws \Loevgaard\DandomainStock\Exception\StockMovementProductMismatchException
      */
     public function diff(StockMovementInterface $stockMovement): StockMovementInterface
     {
@@ -560,7 +560,7 @@ class StockMovement implements StockMovementInterface
     /**
      * @return Money
      *
-     * @throws UnsetCurrencyException
+     * @throws \Loevgaard\DandomainStock\Exception\UnsetCurrencyException
      */
     public function getRetailPrice(): Money
     {
@@ -572,7 +572,7 @@ class StockMovement implements StockMovementInterface
      *
      * @return $this
      *
-     * @throws CurrencyMismatchException
+     * @throws \Loevgaard\DandomainStock\Exception\CurrencyMismatchException
      */
     public function setRetailPrice(Money $retailPrice): self
     {
@@ -586,7 +586,7 @@ class StockMovement implements StockMovementInterface
     /**
      * @return Money
      *
-     * @throws UnsetCurrencyException
+     * @throws \Loevgaard\DandomainStock\Exception\UnsetCurrencyException
      */
     public function getTotalRetailPrice(): Money
     {
@@ -596,7 +596,7 @@ class StockMovement implements StockMovementInterface
     /**
      * @return Money
      *
-     * @throws UnsetCurrencyException
+     * @throws \Loevgaard\DandomainStock\Exception\UnsetCurrencyException
      */
     public function getPrice(): Money
     {
@@ -608,7 +608,7 @@ class StockMovement implements StockMovementInterface
      *
      * @return $this
      *
-     * @throws CurrencyMismatchException
+     * @throws \Loevgaard\DandomainStock\Exception\CurrencyMismatchException
      */
     public function setPrice(Money $price): self
     {
@@ -622,7 +622,7 @@ class StockMovement implements StockMovementInterface
     /**
      * @return Money
      *
-     * @throws UnsetCurrencyException
+     * @throws \Loevgaard\DandomainStock\Exception\UnsetCurrencyException
      */
     public function getTotalPrice(): Money
     {
@@ -632,7 +632,7 @@ class StockMovement implements StockMovementInterface
     /**
      * @return Money
      *
-     * @throws UnsetCurrencyException
+     * @throws \Loevgaard\DandomainStock\Exception\UnsetCurrencyException
      */
     public function getDiscount(): Money
     {
@@ -642,7 +642,7 @@ class StockMovement implements StockMovementInterface
     /**
      * @return Money
      *
-     * @throws UnsetCurrencyException
+     * @throws \Loevgaard\DandomainStock\Exception\UnsetCurrencyException
      */
     public function getTotalDiscount(): Money
     {
@@ -788,7 +788,7 @@ class StockMovement implements StockMovementInterface
      *
      * @return StockMovement
      *
-     * @throws CurrencyMismatchException
+     * @throws \Loevgaard\DandomainStock\Exception\CurrencyMismatchException
      */
     protected function updateCurrency(Money $money): self
     {
@@ -809,7 +809,7 @@ class StockMovement implements StockMovementInterface
      *
      * @return Money
      *
-     * @throws UnsetCurrencyException
+     * @throws \Loevgaard\DandomainStock\Exception\UnsetCurrencyException
      */
     protected function money(int $val): Money
     {

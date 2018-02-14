@@ -35,8 +35,7 @@
     "extra": {
         "branch-alias": {
             "dev-master": "1.0-dev"
-        },
-        "entity-bundle-dir": "src/DandomainFoundation/"
+        }
     },
     "config": {
         "sort-packages": true
