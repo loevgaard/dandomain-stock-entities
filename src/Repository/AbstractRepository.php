@@ -10,15 +10,8 @@ abstract class AbstractRepository extends ServiceEntityRepository
 {
     use AbstractRepositoryTrait;
 
-    /**
-     * @var array
-     */
-    protected $options;
-
     public function __construct(ManagerRegistry $registry, string $entityClass)
     {
-        $this->options = [];
-
         parent::__construct($registry, $entityClass);
     }
 
