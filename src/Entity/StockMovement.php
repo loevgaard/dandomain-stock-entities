@@ -30,7 +30,7 @@ use Symfony\Component\Validator\Constraints as FormAssert;
  * @method Money getTotalDiscountInclVat()
  *
  * @ORM\Entity()
- * @ORM\Table(name="lds_stock_movements", indexes={@ORM\Index(name="type", columns={"type"})})
+ * @ORM\Table(name="lds_stock_movements", indexes={@ORM\Index(name="`type`", columns={"`type`"})})
  * @ORM\HasLifecycleCallbacks()
  **/
 class StockMovement implements StockMovementInterface
@@ -197,7 +197,7 @@ class StockMovement implements StockMovementInterface
      *
      * @FormAssert\Choice(callback="getTypes")
      *
-     * @ORM\Column(name="type", type="string", length=191)
+     * @ORM\Column(name="`type`", type="string", length=191)
      */
     protected $type;
 
@@ -432,10 +432,6 @@ class StockMovement implements StockMovementInterface
 
         return $diff;
     }
-
-    /******************
-     * Helper methods *
-     *****************/
 
     /**
      * Returns the valid types.
