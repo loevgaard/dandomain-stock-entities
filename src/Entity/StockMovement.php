@@ -366,8 +366,7 @@ class StockMovement implements StockMovementInterface
             ->setProduct($orderLine->getProduct())
             ->setOrderLine($orderLine)
             ->setReference('Order '.$orderLine->getOrder()->getExternalId())
-            ->setCreatedAt($created)
-            ->setUpdatedAt($created) // for order lines we specifically override the createdAt and updatedAt dates because the stock movement is actually happening when the order comes in and not when the order is synced
+            ->setCreatedAt($created) // for order lines we specifically override the createdAt and updatedAt dates because the stock movement is actually happening when the order comes in and not when the order is synced
         ;
 
         $retailPrice = $orderLine->getUnitPriceExclVat();
