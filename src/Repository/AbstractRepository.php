@@ -4,7 +4,7 @@ namespace Loevgaard\DandomainStock\Repository;
 
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Common\Persistence\ManagerRegistry;
-use Loevgaard\DandomainFoundation\Repository\Generated\AbstractRepositoryTrait;
+use Loevgaard\DandomainStock\Repository\Generated\AbstractRepositoryTrait;
 
 abstract class AbstractRepository extends ServiceEntityRepository
 {
