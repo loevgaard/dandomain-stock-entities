@@ -1,0 +1,1 @@
+# dandomain-stock-entities
