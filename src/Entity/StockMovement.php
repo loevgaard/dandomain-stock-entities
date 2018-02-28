@@ -261,7 +261,7 @@ class StockMovement implements StockMovementInterface
     public function validate()
     {
         Assert::that($this->product)->isInstanceOf(ProductInterface::class);
-        $productNumber = $this->product->getNumber();
+        $ident = '[P:'.$this->product->getNumber().']';
 
         Assert::that($this->quantity)->integer('quantity needs to be an integer', 'quantity')->notEq(0, 'quantity can never be 0');
         Assert::that($this->complaint)->boolean();
@@ -279,6 +279,7 @@ class StockMovement implements StockMovementInterface
         if ($this->isType(self::TYPE_SALE)) {
             if (!$this->isOrderLineRemoved()) {
                 Assert::that($this->orderLine)->isInstanceOf(OrderLineInterface::class);
+                $ident .= '[O:'.$this->orderLine->getOrder()->getExternalId().']';
             }
             Assert::that($this->quantity)->lessThan(0);
         } elseif ($this->isType(self::TYPE_RETURN)) {
@@ -299,7 +300,7 @@ class StockMovement implements StockMovementInterface
             Assert::that($this->quantity)->lessThan(0, 'quantity needs to be negative when the stock movement is a complaint');
         }
 
-        Assert::thatNullOr($this->product->getIsVariantMaster())->false('['.$productNumber.'] Only simple products and variants is allowed as stock movements');
+        Assert::thatNullOr($this->product->getIsVariantMaster())->false($ident.' Only simple products and variants is allowed as stock movements');
     }
 
     /**
