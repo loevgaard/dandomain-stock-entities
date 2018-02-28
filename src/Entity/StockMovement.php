@@ -14,7 +14,6 @@ use Loevgaard\DandomainStock\Entity\Generated\StockMovementInterface;
 use Loevgaard\DandomainStock\Entity\Generated\StockMovementTrait;
 use Loevgaard\DandomainStock\Exception\CurrencyMismatchException;
 use Loevgaard\DandomainStock\Exception\StockMovementProductMismatchException;
-use Loevgaard\DandomainStock\Exception\UndefinedPriceForCurrencyException;
 use Loevgaard\DandomainStock\Exception\UnsetCurrencyException;
 use Loevgaard\DandomainStock\Exception\UnsetProductException;
 use Money\Currency;
@@ -314,7 +313,6 @@ class StockMovement implements StockMovementInterface
      * @return StockMovementInterface
      *
      * @throws \Loevgaard\DandomainStock\Exception\CurrencyMismatchException
-     * @throws \Loevgaard\DandomainStock\Exception\UndefinedPriceForCurrencyException
      */
     public static function create(int $quantity, Money $unitPrice, float $vatPercent, string $type, ProductInterface $product, string $reference): StockMovementInterface
     {
@@ -331,11 +329,9 @@ class StockMovement implements StockMovementInterface
         $retailPrice = $unitPrice;
         if ($product->getPrices()->count()) {
             $retailPrice = $product->findPriceByCurrency($unitPrice->getCurrency());
-            if (!$retailPrice) {
-                throw new UndefinedPriceForCurrencyException('The product `'.$product->getNumber().'` does not have a price defined for currency `'.$unitPrice->getCurrency()->getCode().'`');
+            if ($retailPrice) {
+                $retailPrice = $retailPrice->getUnitPriceExclVat($vatPercent);
             }
-
-            $retailPrice = $retailPrice->getUnitPriceExclVat($vatPercent);
         }
 
         $stockMovement->setRetailPrice($retailPrice);
@@ -347,7 +343,6 @@ class StockMovement implements StockMovementInterface
      * @param OrderLineInterface $orderLine
      *
      * @throws \Loevgaard\DandomainStock\Exception\CurrencyMismatchException
-     * @throws \Loevgaard\DandomainStock\Exception\UndefinedPriceForCurrencyException
      * @throws \Loevgaard\DandomainStock\Exception\UnsetProductException
      */
     public function populateFromOrderLine(OrderLineInterface $orderLine)
@@ -373,10 +368,8 @@ class StockMovement implements StockMovementInterface
         if ($orderLine->getProduct()->getPrices()->count()) {
             $retailPrice = $orderLine->getProduct()->findPriceByCurrency($orderLine->getUnitPrice()->getCurrency());
             if (!$retailPrice) {
-                throw new UndefinedPriceForCurrencyException('The product `'.$orderLine->getProduct()->getNumber().'` does not have a price defined for currency `'.$orderLine->getUnitPrice()->getCurrency()->getCode().'`');
+                $retailPrice = $retailPrice->getUnitPriceExclVat($orderLine->getVatPct());
             }
-
-            $retailPrice = $retailPrice->getUnitPriceExclVat($orderLine->getVatPct());
         }
 
         $this->setRetailPrice($retailPrice);
