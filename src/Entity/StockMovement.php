@@ -326,12 +326,11 @@ class StockMovement implements StockMovementInterface
             ->setReference($reference)
         ;
 
-        $retailPrice = $unitPrice;
-        if ($product->getPrices()->count()) {
-            $retailPrice = $product->findPriceByCurrency($unitPrice->getCurrency());
-            if ($retailPrice) {
-                $retailPrice = $retailPrice->getUnitPriceExclVat($vatPercent);
-            }
+        $retailPrice = $product->findPriceByCurrency($unitPrice->getCurrency());
+        if($retailPrice) {
+            $retailPrice = $retailPrice->getUnitPriceExclVat($vatPercent);
+        } else {
+            $retailPrice = $unitPrice;
         }
 
         $stockMovement->setRetailPrice($retailPrice);
@@ -364,12 +363,11 @@ class StockMovement implements StockMovementInterface
             ->setCreatedAt($created) // for order lines we specifically override the createdAt and updatedAt dates because the stock movement is actually happening when the order comes in and not when the order is synced
         ;
 
-        $retailPrice = $orderLine->getUnitPriceExclVat();
-        if ($orderLine->getProduct()->getPrices()->count()) {
-            $retailPrice = $orderLine->getProduct()->findPriceByCurrency($orderLine->getUnitPrice()->getCurrency());
-            if (!$retailPrice) {
-                $retailPrice = $retailPrice->getUnitPriceExclVat($orderLine->getVatPct());
-            }
+        $retailPrice = $orderLine->getProduct()->findPriceByCurrency($orderLine->getUnitPrice()->getCurrency());
+        if($retailPrice) {
+            $retailPrice = $retailPrice->getUnitPriceExclVat($orderLine->getVatPct());
+        } else {
+            $retailPrice = $orderLine->getUnitPriceExclVat();
         }
 
         $this->setRetailPrice($retailPrice);
