@@ -2,6 +2,7 @@
 
 namespace Loevgaard\DandomainStockBundle\Tests\Entity;
 
+use Loevgaard\DandomainFoundation\Entity\Order;
 use Loevgaard\DandomainFoundation\Entity\OrderLine;
 use Loevgaard\DandomainFoundation\Entity\Product;
 use Loevgaard\DandomainStock\Entity\StockMovement;
@@ -23,7 +24,10 @@ class StockMovementTest extends TestCase
         $stockMovement = $this->getMockForAbstractClass(StockMovement::class);
 
         $product = new Product();
+        $order = new Order();
+        $order->setExternalId(123456);
         $orderLine = new OrderLine();
+        $order->addOrderLine($orderLine);
 
         $qty = -3;
         $retailPrice = new Money(10396, new Currency('DKK'));
