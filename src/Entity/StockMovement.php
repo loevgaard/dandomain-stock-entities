@@ -263,17 +263,17 @@ class StockMovement implements StockMovementInterface
         Assert::that($this->product)->isInstanceOf(ProductInterface::class);
         $ident = '[P:'.$this->product->getNumber().']';
 
-        Assert::that($this->quantity)->integer('quantity needs to be an integer', 'quantity')->notEq(0, 'quantity can never be 0');
+        Assert::that($this->quantity)->integer($ident.'quantity needs to be an integer', 'quantity')->notEq(0, 'quantity can never be 0');
         Assert::that($this->complaint)->boolean();
         Assert::thatNullOr($this->reference)->string()->maxLength(191);
         Assert::that($this->currency)->string()->length(3);
-        Assert::that($this->retailPrice)->integer('retailPrice needs to be an integer', 'retailPrice')->greaterOrEqualThan(0);
-        Assert::that($this->totalRetailPrice)->integer('totalRetailPrice needs to be an integer', 'totalRetailPrice')->greaterOrEqualThan(0);
-        Assert::that($this->price)->integer('price needs to be an integer', 'price')->greaterOrEqualThan(0);
-        Assert::that($this->totalPrice)->integer('totalPrice needs to be an integer', 'totalPrice')->greaterOrEqualThan(0);
-        Assert::that($this->discount)->integer('discount needs to be an integer', 'discount');
-        Assert::that($this->totalDiscount)->integer('totalDiscount needs to be an integer', 'totalDiscount');
-        Assert::that($this->vatPercentage)->float('vatPercent needs to be a float', 'vatPercentage')->greaterOrEqualThan(0);
+        Assert::that($this->retailPrice)->integer($ident.'retailPrice needs to be an integer', 'retailPrice')->greaterOrEqualThan(0);
+        Assert::that($this->totalRetailPrice)->integer($ident.'totalRetailPrice needs to be an integer', 'totalRetailPrice')->greaterOrEqualThan(0);
+        Assert::that($this->price)->integer($ident.'price needs to be an integer', 'price')->greaterOrEqualThan(0);
+        Assert::that($this->totalPrice)->integer($ident.'totalPrice needs to be an integer', 'totalPrice')->greaterOrEqualThan(0);
+        Assert::that($this->discount)->integer($ident.'discount needs to be an integer', 'discount');
+        Assert::that($this->totalDiscount)->integer($ident.'totalDiscount needs to be an integer', 'totalDiscount');
+        Assert::that($this->vatPercentage)->float($ident.'vatPercent needs to be a float', 'vatPercentage')->greaterOrEqualThan(0);
         Assert::that($this->type)->choice(self::getTypes());
 
         if ($this->isType(self::TYPE_SALE)) {
@@ -281,14 +281,14 @@ class StockMovement implements StockMovementInterface
                 Assert::that($this->orderLine)->isInstanceOf(OrderLineInterface::class);
                 $ident .= '[O:'.$this->orderLine->getOrder()->getExternalId().']';
             }
-            Assert::that($this->quantity)->lessThan(0);
+            Assert::that($this->quantity)->lessThan(0, $ident.'The quantity must be negative when the type equals sale');
         } elseif ($this->isType(self::TYPE_RETURN)) {
-            Assert::that($this->quantity)->greaterThan(0, 'quantity should be greater than 0 if the type is a return');
+            Assert::that($this->quantity)->greaterThan(0, $ident.'quantity should be greater than 0 if the type is a return');
         }
 
         if($this->price > 0) {
             // it is assumed that if a product has a price, then it also has a retail price
-            Assert::that($this->retailPrice)->greaterThan(0, 'When the price is > 0, then retailPrice also has be > 0');
+            Assert::that($this->retailPrice)->greaterThan(0, $ident.'When the price is > 0, then retailPrice also has be > 0');
         }
 
         if($this->retailPrice === 0) {
@@ -297,7 +297,7 @@ class StockMovement implements StockMovementInterface
 
         if ($this->complaint) {
             // a complaint will always be a product that you remove from your stock
-            Assert::that($this->quantity)->lessThan(0, 'quantity needs to be negative when the stock movement is a complaint');
+            Assert::that($this->quantity)->lessThan(0, $ident.'quantity needs to be negative when the stock movement is a complaint');
         }
 
         Assert::thatNullOr($this->product->getIsVariantMaster())->false($ident.' Only simple products and variants is allowed as stock movements');
