@@ -265,7 +265,21 @@ class StockMovement implements StockMovementInterface
         Assert::that($this->product)->isInstanceOf(ProductInterface::class);
         $identifier = '[P => '.$this->product->getNumber().']';
 
-        Assert::that($this->quantity)->integer($identifier.' Quantity needs to be an integer', 'quantity')->notEq(0, 'quantity can never be 0');
+        Assert::that($this->type)->choice(self::getTypes());
+        if ($this->isType(self::TYPE_SALE)) {
+            if (!$this->isOrderLineRemoved()) {
+                Assert::that($this->orderLine)->isInstanceOf(OrderLineInterface::class);
+                $identifier .= '[O => internal: '.$this->orderLine->getOrder()->getId().' | external: '.$this->orderLine->getOrder()->getExternalId().'][OL => internal: '.$this->orderLine->getId().' | external: '.$this->orderLine->getExternalId().']';
+            }
+            Assert::that($this->quantity)->lessThan(0, $identifier.' Quantity must be negative when the type equals sale');
+        } elseif ($this->isType(self::TYPE_RETURN)) {
+            Assert::that($this->quantity)->greaterThan(0, $identifier.' Quantity should be greater than 0 if the type is a return');
+        }
+
+        Assert::that($this->quantity)
+            ->integer($identifier.' Quantity needs to be an integer', 'quantity')
+            ->notEq(0, $identifier.' Quantity can never be 0');
+
         Assert::that($this->complaint)->boolean();
         Assert::thatNullOr($this->reference)->string()->maxLength(191);
         Assert::that($this->currency)->string()->length(3);
@@ -276,17 +290,6 @@ class StockMovement implements StockMovementInterface
         Assert::that($this->discount)->integer($identifier.' Discount needs to be an integer', 'discount');
         Assert::that($this->totalDiscount)->integer($identifier.' Total discount needs to be an integer', 'totalDiscount');
         Assert::that($this->vatPercentage)->float($identifier.' Vat percentage needs to be a float', 'vatPercentage')->greaterOrEqualThan(0);
-        Assert::that($this->type)->choice(self::getTypes());
-
-        if ($this->isType(self::TYPE_SALE)) {
-            if (!$this->isOrderLineRemoved()) {
-                Assert::that($this->orderLine)->isInstanceOf(OrderLineInterface::class);
-                $identifier .= '[O => internal: '.$this->orderLine->getOrder()->getId().' | external: '.$this->orderLine->getOrder()->getExternalId().'][OL => internal: '.$this->orderLine->getId().' | external: '.$this->orderLine->getExternalId().']';
-            }
-            Assert::that($this->quantity)->lessThan(0, $identifier.' Quantity must be negative when the type equals sale');
-        } elseif ($this->isType(self::TYPE_RETURN)) {
-            Assert::that($this->quantity)->greaterThan(0, $identifier.' Quantity should be greater than 0 if the type is a return');
-        }
 
         if ($this->price > 0) {
             // it is assumed that if a product has a price, then it also has a retail price
