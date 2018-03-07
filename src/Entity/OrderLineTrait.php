@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace Loevgaard\DandomainStock\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;

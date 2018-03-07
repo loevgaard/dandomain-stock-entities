@@ -5,7 +5,7 @@
     "require": {
         "php": "~7.1",
         "beberlei/assert": "^2.8",
-        "brick/math": "0.7.*",
+        "brick/math": "~0.7.0",
         "doctrine/orm": "^2.5",
         "hostnet/entity-plugin-lib": "^2.1",
         "knplabs/doctrine-behaviors": "^1.5",

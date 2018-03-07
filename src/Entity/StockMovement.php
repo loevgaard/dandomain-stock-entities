@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace Loevgaard\DandomainStock\Entity;
 
 use Assert\Assert;
@@ -261,46 +263,46 @@ class StockMovement implements StockMovementInterface
     public function validate()
     {
         Assert::that($this->product)->isInstanceOf(ProductInterface::class);
-        $ident = '[P:'.$this->product->getNumber().']';
+        $identifier = '[P:'.$this->product->getNumber().']';
 
-        Assert::that($this->quantity)->integer($ident.'quantity needs to be an integer', 'quantity')->notEq(0, 'quantity can never be 0');
+        Assert::that($this->quantity)->integer($identifier.'quantity needs to be an integer', 'quantity')->notEq(0, 'quantity can never be 0');
         Assert::that($this->complaint)->boolean();
         Assert::thatNullOr($this->reference)->string()->maxLength(191);
         Assert::that($this->currency)->string()->length(3);
-        Assert::that($this->retailPrice)->integer($ident.'retailPrice needs to be an integer', 'retailPrice')->greaterOrEqualThan(0);
-        Assert::that($this->totalRetailPrice)->integer($ident.'totalRetailPrice needs to be an integer', 'totalRetailPrice')->greaterOrEqualThan(0);
-        Assert::that($this->price)->integer($ident.'price needs to be an integer', 'price')->greaterOrEqualThan(0);
-        Assert::that($this->totalPrice)->integer($ident.'totalPrice needs to be an integer', 'totalPrice')->greaterOrEqualThan(0);
-        Assert::that($this->discount)->integer($ident.'discount needs to be an integer', 'discount');
-        Assert::that($this->totalDiscount)->integer($ident.'totalDiscount needs to be an integer', 'totalDiscount');
-        Assert::that($this->vatPercentage)->float($ident.'vatPercent needs to be a float', 'vatPercentage')->greaterOrEqualThan(0);
+        Assert::that($this->retailPrice)->integer($identifier.'retailPrice needs to be an integer', 'retailPrice')->greaterOrEqualThan(0);
+        Assert::that($this->totalRetailPrice)->integer($identifier.'totalRetailPrice needs to be an integer', 'totalRetailPrice')->greaterOrEqualThan(0);
+        Assert::that($this->price)->integer($identifier.'price needs to be an integer', 'price')->greaterOrEqualThan(0);
+        Assert::that($this->totalPrice)->integer($identifier.'totalPrice needs to be an integer', 'totalPrice')->greaterOrEqualThan(0);
+        Assert::that($this->discount)->integer($identifier.'discount needs to be an integer', 'discount');
+        Assert::that($this->totalDiscount)->integer($identifier.'totalDiscount needs to be an integer', 'totalDiscount');
+        Assert::that($this->vatPercentage)->float($identifier.'vatPercent needs to be a float', 'vatPercentage')->greaterOrEqualThan(0);
         Assert::that($this->type)->choice(self::getTypes());
 
         if ($this->isType(self::TYPE_SALE)) {
             if (!$this->isOrderLineRemoved()) {
                 Assert::that($this->orderLine)->isInstanceOf(OrderLineInterface::class);
-                $ident .= '[O:'.$this->orderLine->getOrder()->getExternalId().']';
+                $identifier .= '[O:'.$this->orderLine->getOrder()->getExternalId().']';
             }
-            Assert::that($this->quantity)->lessThan(0, $ident.'The quantity must be negative when the type equals sale');
+            Assert::that($this->quantity)->lessThan(0, $identifier.'The quantity must be negative when the type equals sale');
         } elseif ($this->isType(self::TYPE_RETURN)) {
-            Assert::that($this->quantity)->greaterThan(0, $ident.'quantity should be greater than 0 if the type is a return');
+            Assert::that($this->quantity)->greaterThan(0, $identifier.'quantity should be greater than 0 if the type is a return');
         }
 
-        if($this->price > 0) {
+        if ($this->price > 0) {
             // it is assumed that if a product has a price, then it also has a retail price
-            Assert::that($this->retailPrice)->greaterThan(0, $ident.'When the price is > 0, then retailPrice also has be > 0');
+            Assert::that($this->retailPrice)->greaterThan(0, $identifier.'When the price is > 0, then retailPrice also has be > 0');
         }
 
-        if($this->retailPrice === 0) {
+        if ($this->retailPrice === 0) {
             Assert::that($this->discount)->eq(0);
         }
 
         if ($this->complaint) {
             // a complaint will always be a product that you remove from your stock
-            Assert::that($this->quantity)->lessThan(0, $ident.'quantity needs to be negative when the stock movement is a complaint');
+            Assert::that($this->quantity)->lessThan(0, $identifier.'quantity needs to be negative when the stock movement is a complaint');
         }
 
-        Assert::thatNullOr($this->product->getIsVariantMaster())->false($ident.' Only simple products and variants is allowed as stock movements');
+        Assert::thatNullOr($this->product->getIsVariantMaster())->false($identifier.' Only simple products and variants is allowed as stock movements');
     }
 
     /**
@@ -328,7 +330,7 @@ class StockMovement implements StockMovementInterface
         ;
 
         $retailPrice = $product->findPriceByCurrency($unitPrice->getCurrency());
-        if($retailPrice) {
+        if ($retailPrice) {
             $retailPrice = $retailPrice->getUnitPriceExclVat($vatPercent);
         } else {
             $retailPrice = $unitPrice;
@@ -365,7 +367,7 @@ class StockMovement implements StockMovementInterface
         ;
 
         $retailPrice = $orderLine->getProduct()->findPriceByCurrency($orderLine->getUnitPrice()->getCurrency());
-        if($retailPrice) {
+        if ($retailPrice) {
             $retailPrice = $retailPrice->getUnitPriceExclVat($orderLine->getVatPct());
         } else {
             $retailPrice = $orderLine->getUnitPriceExclVat();
