@@ -363,7 +363,7 @@ class StockMovement implements StockMovementInterface
         $this
             ->setQuantity(-1 * $orderLine->getQuantity()) // we multiply by -1 because we count an order as 'outgoing' from the stock
             ->setPrice($orderLine->getUnitPriceExclVat())
-            ->setVatPercentage($orderLine->getVatPct())
+            ->setVatPercentage((string)$orderLine->getVatPct())
             ->setType(static::TYPE_SALE)
             ->setProduct($orderLine->getProduct())
             ->setOrderLine($orderLine)
