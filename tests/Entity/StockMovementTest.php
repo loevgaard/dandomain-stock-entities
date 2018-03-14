@@ -55,7 +55,7 @@ class StockMovementTest extends TestCase
             ->setType(StockMovement::TYPE_SALE)
             ->setReference('order')
             ->setComplaint(false)
-            ->setVatPercentage(25.0)
+            ->setVatPercentage('25.0')
             ->setOrderLine($orderLine)
             ->setProduct($product)
         ;
@@ -68,7 +68,7 @@ class StockMovementTest extends TestCase
         $this->assertSame(StockMovement::TYPE_SALE, $stockMovement->getType());
         $this->assertSame('order', $stockMovement->getReference());
         $this->assertFalse($stockMovement->isComplaint());
-        $this->assertSame(25.0, $stockMovement->getVatPercentage());
+        $this->assertSame('25.0', $stockMovement->getVatPercentage());
         $this->assertSame($product, $stockMovement->getProduct());
         $this->assertSame($orderLine, $stockMovement->getOrderLine());
 
