@@ -182,7 +182,7 @@ class StockMovement implements StockMovementInterface
     /**
      * This is the vat percentage.
      *
-     * @var float
+     * @var string
      *
      * @FormAssert\NotBlank()
      * @FormAssert\GreaterThanOrEqual(0)
@@ -289,7 +289,9 @@ class StockMovement implements StockMovementInterface
         Assert::that($this->totalPrice)->integer($identifier.' Total price needs to be an integer', 'totalPrice')->greaterOrEqualThan(0);
         Assert::that($this->discount)->integer($identifier.' Discount needs to be an integer', 'discount');
         Assert::that($this->totalDiscount)->integer($identifier.' Total discount needs to be an integer', 'totalDiscount');
-        Assert::that($this->vatPercentage)->float($identifier.' Vat percentage needs to be a float', 'vatPercentage')->greaterOrEqualThan(0);
+        Assert::that($this->vatPercentage)->string($identifier.' Vat percentage needs to be a string', 'vatPercentage');
+        $castedVatPercentage = intval($this->vatPercentage);
+        Assert::that($castedVatPercentage)->greaterOrEqualThan(0, 'The vat percentage needs to be greater than 0', 'vatPercentage');
 
         if ($this->price > 0) {
             // it is assumed that if a product has a price, then it also has a retail price
@@ -311,7 +313,7 @@ class StockMovement implements StockMovementInterface
     /**
      * @param int              $quantity
      * @param Money            $unitPrice
-     * @param float            $vatPercent
+     * @param float|string     $vatPercent
      * @param string           $type
      * @param ProductInterface $product
      * @param string           $reference
@@ -320,13 +322,13 @@ class StockMovement implements StockMovementInterface
      *
      * @throws \Loevgaard\DandomainStock\Exception\CurrencyMismatchException
      */
-    public static function create(int $quantity, Money $unitPrice, float $vatPercent, string $type, ProductInterface $product, string $reference): StockMovementInterface
+    public static function create(int $quantity, Money $unitPrice, $vatPercent, string $type, ProductInterface $product, string $reference): StockMovementInterface
     {
         $stockMovement = new StockMovement();
         $stockMovement
             ->setQuantity($quantity)
             ->setPrice($unitPrice)
-            ->setVatPercentage($vatPercent)
+            ->setVatPercentage((string)$vatPercent)
             ->setType($type)
             ->setProduct($product)
             ->setReference($reference)
@@ -653,19 +655,19 @@ class StockMovement implements StockMovementInterface
     }
 
     /**
-     * @return float
+     * @return string
      */
-    public function getVatPercentage(): float
+    public function getVatPercentage(): string
     {
-        return (float) $this->vatPercentage;
+        return (string) $this->vatPercentage;
     }
 
     /**
-     * @param float $vatPercentage
+     * @param string $vatPercentage
      *
      * @return StockMovement
      */
-    public function setVatPercentage(float $vatPercentage): self
+    public function setVatPercentage(string $vatPercentage): self
     {
         $this->vatPercentage = $vatPercentage;
 
@@ -832,6 +834,6 @@ class StockMovement implements StockMovementInterface
      */
     protected function getVatMultiplier(): string
     {
-        return (string) BigDecimal::of('100')->plus($this->vatPercentage)->exactlyDividedBy(100);
+        return (string) BigDecimal::of('100')->plus($this->getVatPercentage())->exactlyDividedBy(100);
     }
 }
