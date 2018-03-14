@@ -105,12 +105,11 @@ trait OrderLineTrait
         $lastStockMovement = $this->stockMovements->last();
 
         $qty = 0;
-        $stockMovement = $lastStockMovement->copy();
-
         foreach ($this->stockMovements as $stockMovement) {
             $qty += $stockMovement->getQuantity();
         }
 
+        $stockMovement = $lastStockMovement->copy();
         $stockMovement->setQuantity($qty);
 
         return $stockMovement;
@@ -118,10 +117,8 @@ trait OrderLineTrait
 
     protected function initStockMovements(): void
     {
-        if (!is_null($this->stockMovements)) {
-            return;
+        if (is_null($this->stockMovements)) {
+            $this->stockMovements = new ArrayCollection();
         }
-
-        $this->stockMovements = new ArrayCollection();
     }
 }
