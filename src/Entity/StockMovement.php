@@ -220,6 +220,7 @@ class StockMovement implements StockMovementInterface
      * @var OrderLineInterface|null
      *
      * @ORM\ManyToOne(targetEntity="Loevgaard\DandomainFoundation\Entity\OrderLine", inversedBy="stockMovements")
+     * @ORM\JoinColumn(onDelete="SET NULL", nullable=true)
      */
     protected $orderLine;
 
