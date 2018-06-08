@@ -336,7 +336,7 @@ class StockMovement implements StockMovementInterface
 
         $retailPrice = $product->findPriceByCurrency($unitPrice->getCurrency());
         if ($retailPrice) {
-            $retailPrice = $retailPrice->getUnitPriceExclVat($vatPercent);
+            $retailPrice = $retailPrice->getUnitPriceExclVat((float)$vatPercent);
         } else {
             $retailPrice = $unitPrice;
         }
